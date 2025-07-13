@@ -1,8 +1,8 @@
 {
-    "name": "emailengine-app",
+    "name": "seedlink",
     "version": "2.53.2",
     "private": true,
-    "productTitle": "EmailEngine",
+    "productTitle": "Seedlist email management system",
     "description": "Email Sync Engine",
     "main": "server.js",
     "scripts": {
@@ -33,12 +33,12 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/postalsys/emailengine.git"
+        "url": "https://github.com/Shofiul735/emailengine"
     },
     "bugs": {
-        "url": "https://github.com/postalsys/emailengine/issues"
+        "url": "https://seedlink.vc"
     },
-    "homepage": "https://emailengine.app/",
+    "homepage": "https://seedlink.vc",
     "dependencies": {
         "@bugsnag/js": "8.4.0",
         "@bull-board/api": "6.11.0",

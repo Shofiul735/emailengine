@@ -26,7 +26,7 @@
         "SMTP",
         "MIME"
     ],
-    "author": "Postal Systems OU",
+    "author": "Seedlink",
     "license": "LICENSE_EMAILENGINE",
     "bin": {
         "emailengine": "bin/emailengine.js"

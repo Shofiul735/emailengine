@@ -2883,7 +2883,7 @@ Include your token in requests using one of these methods:
                                 pass: 'secretpass'
                             },
                             host: 'mail.example.com',
-                            port: 465,
+                            port: 587,
                             secure: true
                         }
                     })
@@ -7650,7 +7650,7 @@ Include your token in requests using one of these methods:
                         .integer()
                         .min(1)
                         .max(64 * 1024)
-                        .example(465)
+                        .example(587)
                         .description('Service port number')
                         .label('Port'),
 
@@ -7726,7 +7726,7 @@ Include your token in requests using one of these methods:
                         .integer()
                         .min(1)
                         .max(64 * 1024)
-                        .example(465)
+                        .example(587)
                         .description('Service port number')
                         .label('Port')
                         .required(),
@@ -7814,7 +7814,7 @@ Include your token in requests using one of these methods:
                         .min(1)
                         .empty('')
                         .max(64 * 1024)
-                        .example(465)
+                        .example(587)
                         .description('Service port number')
                         .label('Port'),
 

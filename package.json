@@ -1,8 +1,13 @@
 {
+<<<<<<< Updated upstream
     "name": "emailengine-app",
     "version": "2.54.3",
+=======
+    "name": "seedlink",
+    "version": "1.0.1",
+>>>>>>> Stashed changes
     "private": true,
-    "productTitle": "EmailEngine",
+    "productTitle": "Seedlist email management system",
     "description": "Email Sync Engine",
     "main": "server.js",
     "scripts": {
@@ -26,19 +31,19 @@
         "SMTP",
         "MIME"
     ],
-    "author": "Postal Systems OU",
-    "license": "LICENSE_EMAILENGINE",
+    "author": "Seedlink",
+    "license": "Seedlink_License",
     "bin": {
         "emailengine": "bin/emailengine.js"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/postalsys/emailengine.git"
+        "url": "https://github.com/Shofiul735/emailengine"
     },
     "bugs": {
-        "url": "https://github.com/postalsys/emailengine/issues"
+        "url": "https://seedlink.vc"
     },
-    "homepage": "https://emailengine.app/",
+    "homepage": "https://seedlink.vc",
     "dependencies": {
         "@bugsnag/js": "8.4.0",
         "@bull-board/api": "6.12.0",

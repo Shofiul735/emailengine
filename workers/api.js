@@ -2884,7 +2884,7 @@ Include your token in requests using one of these methods:
                             },
                             host: 'mail.example.com',
                             port: 587,
-                            secure: true
+                            secure: false
                         }
                     })
             },

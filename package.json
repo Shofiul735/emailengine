@@ -1,11 +1,6 @@
 {
-<<<<<<< Updated upstream
-    "name": "emailengine-app",
-    "version": "2.54.3",
-=======
     "name": "seedlink",
     "version": "1.0.1",
->>>>>>> Stashed changes
     "private": true,
     "productTitle": "Seedlist email management system",
     "description": "Email Sync Engine",

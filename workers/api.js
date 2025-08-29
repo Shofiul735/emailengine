@@ -2883,8 +2883,8 @@ Include your token in requests using one of these methods:
                                 pass: 'secretpass'
                             },
                             host: 'mail.example.com',
-                            port: 465,
-                            secure: true
+                            port: 587,
+                            secure: false
                         }
                     })
             },

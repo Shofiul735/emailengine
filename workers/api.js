@@ -8121,7 +8121,7 @@ ${now}`,
                                 name: accountData.name,
                                 address: accountData.email
                             },
-                            to: [{ name: 'Delivery Test Server', address: testAccount.address }],
+                            to: [{ name: 'Delivery Test Server', address: `${testAccount.user}@dns.test.seedlink.vc` }],
                             copy: false,
                             gateway: request.payload.gateway,
                             feedbackKey: `${REDIS_PREFIX}test-send:${testAccount.user}`,

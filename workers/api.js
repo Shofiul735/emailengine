@@ -2883,8 +2883,8 @@ Include your token in requests using one of these methods:
                                 pass: 'secretpass'
                             },
                             host: 'mail.example.com',
-                            port: 465,
-                            secure: true
+                            port: 587,
+                            secure: false
                         }
                     })
             },
@@ -8121,7 +8121,7 @@ ${now}`,
                                 name: accountData.name,
                                 address: accountData.email
                             },
-                            to: [{ name: 'Delivery Test Server', address: testAccount.address }],
+                            to: [{ name: 'Delivery Test Server', address: `${testAccount.user}@dns.test.seedlink.vc` }],
                             copy: false,
                             gateway: request.payload.gateway,
                             feedbackKey: `${REDIS_PREFIX}test-send:${testAccount.user}`,

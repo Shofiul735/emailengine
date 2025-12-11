@@ -105,7 +105,7 @@ EENGINE_LOG_LEVEL=info
 EENGINE_WORKERS=8
 
 # EmailEngine settings (JSON format)
-EENGINE_SETTINGS={"smtpServerEnabled": true, "smtpServerPort": 2525, "smtpServerHost": "0.0.0.0", "smtpServerAuthEnabled": true, "smtpServerPassword": "${SMTP_PASSWORD}"}
+EENGINE_SETTINGS={"smtpServerEnabled": true, "smtpServerPort": 587, "smtpServerHost": "0.0.0.0", "smtpServerAuthEnabled": false, "smtpServerPassword": "${SMTP_PASSWORD}"}
 
 # ===========================================
 # REDIS CONFIGURATION

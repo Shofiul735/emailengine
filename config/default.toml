@@ -34,5 +34,5 @@ proxy = false      # Set to true if using HAProxy with send-proxy option
 redis = "redis://127.0.0.1:6379/8"
 
 [log]
-level = "trace"
+level = "silent"
 raw = false

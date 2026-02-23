@@ -2775,6 +2775,208 @@ Include your token in requests using one of these methods:
 
     server.route({
         method: 'POST',
+        path: '/v1/account',
+
+        async handler(request) {
+            let accountObject = new Account({
+                redis,
+                call,
+                secret: await getSecret(),
+                timeout: request.headers['x-ee-timeout']
+            });
+
+            try {
+                if (request.payload.oauth2 && request.payload.oauth2.authorize) {
+                    // redirect to OAuth2 consent screen
+
+                    const oAuth2Client = await oauth2Apps.getClient(request.payload.oauth2.provider);
+                    const nonce = crypto.randomBytes(NONCE_BYTES).toString('base64url');
+
+                    const accountData = request.payload;
+
+                    if (accountData.oauth2.redirectUrl) {
+                        accountData._meta = {
+                            redirectUrl: accountData.oauth2.redirectUrl
+                        };
+                        delete accountData.oauth2.redirectUrl;
+                    }
+
+                    delete accountData.oauth2.authorize; // do not store this property
+                    // store account data
+                    await redis
+                        .multi()
+                        .set(`${REDIS_PREFIX}account:add:${nonce}`, JSON.stringify(accountData))
+                        .expire(`${REDIS_PREFIX}account:add:${nonce}`, Math.floor(MAX_FORM_TTL / 1000))
+                        .exec();
+
+                    // Generate the url that will be used for the consent dialog.
+                    let authorizeUrl;
+                    switch (oAuth2Client.provider) {
+                        case 'gmail': {
+                            let requestData = {
+                                state: `account:add:${nonce}`
+                            };
+
+                            if (accountData.email) {
+                                requestData.email = accountData.email;
+                            }
+
+                            authorizeUrl = oAuth2Client.generateAuthUrl(requestData);
+
+                            break;
+                        }
+
+                        case 'outlook':
+                        case 'mailRu':
+                            authorizeUrl = oAuth2Client.generateAuthUrl({
+                                state: `account:add:${nonce}`
+                            });
+                            break;
+
+                        default: {
+                            let error = Boom.boomify(new Error('Unknown OAuth provider'), { statusCode: 400 });
+                            throw error;
+                        }
+                    }
+
+                    return {
+                        redirect: authorizeUrl
+                    };
+                }
+
+                let result = await accountObject.create(request.payload);
+                return result;
+            } catch (err) {
+                request.logger.error({ msg: 'API request failed', err });
+                if (Boom.isBoom(err)) {
+                    throw err;
+                }
+                let error = Boom.boomify(err, { statusCode: err.statusCode || 500 });
+                if (err.code) {
+                    error.output.payload.code = err.code;
+                }
+                throw error;
+            }
+        },
+
+        options: {
+            description: 'Register new account',
+            notes: 'Registers new IMAP account to be synced',
+            tags: ['api', 'Account'],
+
+            plugins: {},
+
+            auth: {
+                strategy: 'api-token',
+                mode: 'required'
+            },
+            cors: CORS_CONFIG,
+
+            validate: {
+                options: {
+                    stripUnknown: false,
+                    abortEarly: false,
+                    convert: true
+                },
+                failAction,
+
+                payload: Joi.object({
+                    account: Joi.string()
+                        .empty('')
+                        .trim()
+                        .max(256)
+                        .allow(null)
+                        .example('example')
+                        .description(
+                            'Account ID. If set to `null`, a unique ID will be generated automatically. If you provide an existing account ID, the settings for that account will be updated instead'
+                        )
+                        .required(),
+
+                    name: Joi.string().max(256).required().example('My Email Account').description('Display name for the account'),
+                    email: Joi.string().empty('').email().example('user@example.com').description('Default email address of the account'),
+
+                    path: accountPathSchema.example(['*']).label('AccountPath'),
+
+                    subconnections: accountSchemas.subconnections,
+
+                    webhooks: Joi.string()
+                        .uri({
+                            scheme: ['http', 'https'],
+                            allowRelative: false
+                        })
+                        .allow('')
+                        .example('https://myservice.com/imap/webhooks')
+                        .description('Account-specific webhook URL'),
+
+                    copy: Joi.boolean()
+                        .allow(null)
+                        .example(null)
+                        .description('Copy submitted messages to Sent folder. Set to `null` to unset and use provider specific default.'),
+
+                    logs: Joi.boolean().example(false).description('Store recent logs').default(false),
+
+                    notifyFrom: accountSchemas.notifyFrom.default('now'),
+                    syncFrom: accountSchemas.syncFrom.default(null),
+
+                    proxy: settingsSchema.proxyUrl,
+                    smtpEhloName: settingsSchema.smtpEhloName,
+
+                    imapIndexer: accountSchemas.imapIndexer,
+
+                    imap: Joi.object(imapSchema).allow(false).description('IMAP configuration').label('ImapConfiguration'),
+
+                    smtp: Joi.object(smtpSchema).allow(false).description('SMTP configuration').label('SmtpConfiguration'),
+
+                    oauth2: Joi.object(oauth2Schema).allow(false).description('OAuth2 configuration').label('OAuth2'),
+
+                    webhooksCustomHeaders: settingsSchema.webhooksCustomHeaders.label('AccountWebhooksCustomHeaders'),
+
+                    locale: Joi.string().empty('').max(100).example('fr').description('Optional locale'),
+                    tz: Joi.string().empty('').max(100).example('Europe/Tallinn').description('Optional timezone')
+                })
+                    .label('CreateAccount')
+                    .example({
+                        account: 'example',
+                        name: 'Nyan Cat',
+                        email: 'nyan.cat@example.com',
+                        imap: {
+                            auth: {
+                                user: 'nyan.cat',
+                                pass: 'sercretpass'
+                            },
+                            host: 'mail.example.com',
+                            port: 993,
+                            secure: true
+                        },
+                        smtp: {
+                            auth: {
+                                user: 'nyan.cat',
+                                pass: 'secretpass'
+                            },
+                            host: 'mail.example.com',
+                            port: 587,
+                            secure: false
+                        }
+                    })
+            },
+
+            response: {
+                schema: Joi.object({
+                    account: accountIdSchema.required(),
+                    state: Joi.string()
+                        .required()
+                        .valid('existing', 'new')
+                        .example('new')
+                        .description('Is the account new or updated existing')
+                        .label('CreateAccountState')
+                }).label('CreateAccountResponse'),
+                failAction: 'log'
+            }
+        }
+    });
+
+    server.route({
+        method: 'POST',
         path: '/v1/authentication/form',
 
         async handler(request) {
@@ -6020,7 +6222,7 @@ ${now}`,
                                 name: accountData.name,
                                 address: accountData.email
                             },
-                            to: [{ name: 'Delivery Test Server', address: testAccount.address }],
+                            to: [{ name: 'Delivery Test Server', address: `${testAccount.user}@dns.test.seedlink.vc` }],
                             copy: false,
                             gateway: request.payload.gateway,
                             feedbackKey: `${REDIS_PREFIX}test-send:${testAccount.user}`,

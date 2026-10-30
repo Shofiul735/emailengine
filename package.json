@@ -1,9 +1,9 @@
 {
-    "name": "emailengine-app",
+    "name": "seedlink-app",
     "version": "2.87.0",
     "private": false,
-    "productTitle": "EmailEngine",
-    "description": "Email Sync Engine",
+    "productTitle": "Seedlink",
+    "description": "Email Sync-Seedlink",
     "main": "server.js",
     "scripts": {
         "prepare": "git rev-parse --git-dir >/dev/null 2>&1 && git config core.hooksPath .githooks || true",
@@ -40,7 +40,7 @@
         "SMTP",
         "MIME"
     ],
-    "author": "Postal Systems OU",
+    "author": "Seedlink Innovation LLC",
     "license": "LICENSE_EMAILENGINE",
     "bin": {
         "emailengine": "bin/emailengine.js"
@@ -50,10 +50,10 @@
         "url": "git+https://github.com/postalsys/emailengine.git"
     },
     "bugs": {
-        "url": "https://emailengine.app/support",
-        "email": "support@postalsys.com"
+        "url": "https://app.seedlist.ai/signup",
+        "email": "shofiul.islam@seedlink.vc"
     },
-    "homepage": "https://emailengine.app/",
+    "homepage": "https://seedlink.vc/",
     "dependencies": {
         "@hapi/accept": "6.0.3",
         "@hapi/bell": "13.2.1",

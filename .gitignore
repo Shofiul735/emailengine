@@ -19,6 +19,9 @@ config/development*
 keylog.txt
 .claude/*
 !.claude/rules/
+.idea
+
+CLAUDE.md
 issue*
 patch*
 manual-test/
